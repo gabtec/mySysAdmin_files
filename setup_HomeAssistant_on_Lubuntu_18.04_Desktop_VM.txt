@@ -1,0 +1,103 @@
+HomeAssistant no Lubuntu 18.04 Desktop Version
+==============================================
+
+LINK: https://github.com/pypa/pip/issues/5374
+
+$ sudo apt update
+$ sudo apt upgrade
+
+// check Python version
+$ python3 -V
+
+// set static IP
+$ use GUI
+
+// deactivate ipv6
+$ sudo nano /etc/default/grub
+
+//change this 2 lines, like this:
+GRUB_CMDLINE_LINUX_DEFAULT="ipv6.disable=1"
+GRUB_CMDLINE_LINUX="ipv6.disable=1"
+
+$ sudo update-grub
+$ sudo reboot
+
+//check
+$ ip a
+
+// install dependencies
+$ sudo apt-get install python3-pip
+
+$ sudo apt-get install libssl-dev libffi-dev python3-venv
+
+// create folder where venv will be created
+$ cd /srv
+$ sudo mkdir homeassistant
+$ sudo chown <your user name >:<your user group> homeassistant
+
+// Create a virtual environment in your current directory:
+$ cd /srv/homeassistant
+$ python3 -m venv .
+$ source bin/activate
+
+// Inside venv
+// Install wheel:
+$ python3 -m pip install wheel
+
+// upgrade pip
+$ pip3 install --upgrade pip
+
+// Install Home Assistant:
+$ pip3 install homeassistant
+
+// Run Home Assistant manually:
+$ hass
+
+// Try it
+Browser: http://ip:8123
+
+
+Bónus 1:
+--------------------
+
+// Configure it to autostart
+// create the file ...
+$ sudo nano /etc/systemd/system/home-assistant@<your user name>.service
+
+// ...with this content: ATTENTION - change your user name in the code
+
+[Unit]
+Description=Home Assistant
+After=network-online.target
+
+[Service]
+Type=simple
+User=%i
+ExecStart=/srv/homeassistant/bin/hass -c "/home/<your user name>/.homeassistant"
+
+[Install]
+WantedBy=multi-user.target
+
+
+<save file>
+
+// next
+$ sudo systemctl --system daemon-reload
+$ sudo systemctl enable home-assistant@<your user name>
+$ sudo systemctl start home-assistant@<your user name>
+
+
+
+Bónus 2:
+--------------------
+
+// create some usefull aliases
+$ nano /home/gabriel/.bash_aliases
+
+alias reboothass="systemctl restart home-assistant@homeassistant.service"
+alias loghass="tail -f -n 1000 /home/homeassistant/.homeassistant/home-assistant.log"
+
+// load
+$ source .bash_aliases
+
+

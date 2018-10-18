@@ -1,0 +1,70 @@
+Setup HomeAssistant no FreeNAS v11.1U6
+======================================
+date: 2018-10-17
+version: 1
+======================================
+
+link 1: 
+	https://www.home-assistant.io/docs/installation/freenas/
+
+
+Passos:
++++++++++++++++++++++++++++++++++++++++++++
+
+1- criar nova jail [Barra Menus > Jails > Add]
+2- dar um nome e em advanced mode definir IP que queremos
+3- na janela onde está a lista das nossas jails, ao fundo está o botão que abre a linha de comandos da jail. Depois inserimos os comandos:
+
+	$ pkg update
+	$ pkg upgrade
+	$ pkg install python35
+
+	// verificar versão do python
+	$ python3 -V
+
+	$ pkg install py35-sqlite3
+	$ python3.5 -m ensurepip
+
+	// verificar versão do pip
+	$ pip3 -V
+
+	// atualizar pip
+	$ pip3 install --upgrade pip
+
+	// verificar nova versão do pip
+	$ pip3 -V
+
+
+	$ pip3 install homeassistant
+
+
+	// criar a pasta onde vão ficar os ficheiros de configuração do HA
+	$ mkdir -p /home/.homeassistant
+
+	// iniciar HA pela primeira vez
+	$ /usr/local/bin/hass --config /home/.homeassistant/ &
+
+
+4- Configurar HA para arrancar com o sistema (autostart)
+
+	// criar ficheiro /etc/rc.local 
+	$ vi /etc/rc.local
+
+	// escrever a seguinte linha no novo ficheiro:
+	// (nota) no editor vi, para começar a escrever, carregar na tecla i
+
+		/usr/local/bin/hass --config /home/.homeassistant/ &
+
+		//salvar ficheiro. Para quem não conhece o editor vi, faz-se:
+			- esc
+			- :wq
+			- enter
+
+	// alterar permissões do novo ficheiro para ser executável
+	$ chmod 755 /etc/rc.local
+
+5- fechar a janela da linha comandos e fazer restart da jail (botão amarelo, no fundo da página)
+
+6- Aceder ao HA:
+	Browser: http://<my-ip>:8123
+
